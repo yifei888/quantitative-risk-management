@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[88]:
+# In[117]:
 
 
 import numpy as np
@@ -9,6 +9,7 @@ import pandas as pd
 import statsmodels.api as sm
 from scipy.optimize import minimize
 from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
 df = pd.read_csv('problem2.csv')
 df
 
@@ -64,10 +65,9 @@ print('Standard error: ',result.x[2])
 
 # # MLE Fitting with T-distribution
 
-# In[106]:
+# In[ ]:
 
 
-from scipy.stats import t
 def myllt(parameters):
     beta = parameters[0]  
     a = parameters[1] 
@@ -86,4 +86,52 @@ print('Beta: ',resultt.x[0])
 print('Intercept: ',resultt.x[1])
 print('Standard error: ',resultt.x[2])
 print('Degree of freedom: ',resultt.x[3])
+
+
+# # Problem2_x.csv
+
+# In[108]:
+
+
+df1 = pd.read_csv('problem2_x.csv')
+df1
+
+
+# In[114]:
+
+
+X1 = df1['x1']
+X2 = df1['x2']
+X1_mean = np.mean(X1)
+X2_mean = np.mean(X2)
+cov = np.cov(X1, X2)
+sd1 = cov[0, 0]
+sd2 = cov[1, 1]
+sd3 = cov[0, 1]
+
+conditional_mean = X2_mean + sd3 / sd1 * (X1 - X1_mean)
+conditional_variance = sd2 - sd3**2 / sd1
+conditional_sd = np.sqrt(conditional_variance)
+
+
+# In[115]:
+
+
+confidenceinterval_l = conditional_mean - 1.96 * conditional_sd
+confidenceinterval_u = conditional_mean + 1.96 * conditional_sd
+
+
+# In[121]:
+
+
+plt.scatter(X1, X2, color = 'red')
+plt.scatter(X1, conditional_mean, color = 'blue')
+plt.plot(X1, confidenceinterval_l)
+plt.plot(X1, confidenceinterval_u)
+
+
+# In[ ]:
+
+
+
 
